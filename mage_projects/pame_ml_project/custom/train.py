@@ -3,6 +3,7 @@ if 'custom' not in globals():
 from pycaret.regression import *
 import pendulum
 import wandb
+import pandas as pd
 
 def train_pycaret_model(data, train_data_proportion, target, fold, metric, save_model_path):
     """
@@ -32,23 +33,24 @@ def train_pycaret_model(data, train_data_proportion, target, fold, metric, save_
                )
 
     best = compare_models(sort=metric)
-    best_rmse = best["RMSE"]
 
     # Save the best model
     save_model(best, save_model_path)
 
-    return best_rmse
-
 
 @custom
 def train(data, *args, **kwargs):
+    # timestamp to datetime
+    data['datetime'] = pd.to_datetime(data['timestamp'], unit='s')
+    # drop timestamp
+    data = data.drop(columns=['timestamp'])
     data['datetime'] = data['datetime'].dt.tz_localize(None)
     data.index = data['datetime']
     train_proportion = 0.8
-    target = 'pdrybulb_temperature'
+    target = 'drybulb_temperature'
     fold = 4
-    metric = 'rmse'
-    save_model_path = 'model.pkl'
+    metric = 'RMSE'
+    save_model_path = 'pame_ts_model'
     user = 'john'
     # Get current datetime
     now = pendulum.now().to_datetime_string()
@@ -61,11 +63,9 @@ def train(data, *args, **kwargs):
         # Train model
         best_rmse = train_pycaret_model(data, train_proportion, target, fold, metric, save_model_path)
 
-        # Log metrics to W&B
-        wandb.log({"RMSE": best_rmse})        
         # Create a W&B artifact and add the model file to it
         artifact = wandb.Artifact('model', type='model')
-        artifact.add_file(save_model_path)
+        artifact.add_file(save_model_path + '.pkl')
         # Log the artifact
         run.log_artifact(artifact)
     except Exception as e:
