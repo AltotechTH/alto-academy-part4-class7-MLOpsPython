@@ -20,7 +20,10 @@ df = pd.DataFrame(data)
 
 
 # Step 2: Preprocess data for model inference
-message = {}
+message = {
+    'model_name': 'pame_ts_model.pkl',
+    'data': df
+}
 
 # Step 3: Send the message to Flask server for model inference using requests
 url = 'http://localhost:5000/predict'  # Replace with your Flask server URL
