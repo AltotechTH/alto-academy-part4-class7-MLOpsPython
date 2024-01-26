@@ -24,3 +24,7 @@ services:
         condition: on-failure
     networks:
       - internal
+
+networks:
+  internal:
+    name: internal
