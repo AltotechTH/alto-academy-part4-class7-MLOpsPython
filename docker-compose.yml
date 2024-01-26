@@ -1,0 +1,24 @@
+version: "3.8"
+
+services:
+  mage-ai:
+    image: mageai/mageai:deploy
+    container_name: "mage_ai"
+    command: ["/app/run_app.sh", "mage", "start", "${PROJECT_NAME}"]
+    env_file:
+      - .env
+    build:
+      context: .
+      args:
+        - USER_CODE_PATH=/home/src/${PROJECT_NAME}
+        - ENV=${ENV}
+        - PROJECT_NAME=${PROJECT_NAME}
+      dockerfile: Dockerfile.mage
+    ports:
+      - "6789:6789"
+    volumes:
+      - ./mage_projects:/home/src
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: always
