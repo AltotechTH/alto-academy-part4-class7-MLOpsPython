@@ -166,7 +166,7 @@ class AltoCrateDB(AltoDatabase):
         # Construct payload and execute many to insert data
         entry = []
         for row in data:
-            entry += [tuple([row[col] for col in column_names])]
+            entry += [tuple(row)]
 
         cursor.executemany(insert_string, entry)
         cursor.close()
