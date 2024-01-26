@@ -1,0 +1,60 @@
+blocks:
+- all_upstream_blocks_executed: true
+  color: null
+  configuration: {}
+  downstream_blocks:
+  - write_data_to_cratedb
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: extract_data_from_weather_api
+  retry_config: null
+  status: updated
+  timeout: null
+  type: data_loader
+  upstream_blocks: []
+  uuid: extract_data_from_weather_api
+- all_upstream_blocks_executed: false
+  color: null
+  configuration: {}
+  downstream_blocks: []
+  executor_config: null
+  executor_type: local_python
+  has_callback: false
+  language: python
+  name: write_data_to_cratedb
+  retry_config: null
+  status: updated
+  timeout: null
+  type: data_exporter
+  upstream_blocks:
+  - extract_data_from_weather_api
+  uuid: write_data_to_cratedb
+cache_block_output_in_memory: false
+callbacks: []
+concurrency_config: {}
+conditionals: []
+created_at: '2024-01-26 15:16:39.630093+00:00'
+data_integration: null
+description: null
+executor_config: {}
+executor_count: 1
+executor_type: null
+extensions: {}
+name: get_weather_data_pipeline
+notification_config: {}
+remote_variables_dir: null
+retry_config: {}
+run_pipeline_in_one_process: false
+settings:
+  triggers: null
+spark_config: {}
+tags: []
+type: python
+updated_at: '2024-01-26 16:44:34'
+uuid: get_weather_data_pipeline
+variables:
+  raw_table: pame_raw_data
+variables_dir: /home/src/mage_data/pame_ml_project
+widgets: []
