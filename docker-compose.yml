@@ -20,7 +20,7 @@ services:
       - internal
   
   mage-ai:
-    image: mageai/mageai:0.9.34
+    image: mageai/mageai:0.9.60
     container_name: "mage_ai_pame"
     command: bash -c "pip install polars-lts-cpu library && /app/run_app.sh"
     ports:
