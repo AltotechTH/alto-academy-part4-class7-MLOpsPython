@@ -1,27 +1,35 @@
 version: "3.8"
 
 services:
-  mage-ai:
-    image: mageai/mageai:deploy
-    container_name: "mage_ai"
-    command: ["/app/run_app.sh", "mage", "start", "${PROJECT_NAME}"]
-    env_file:
-      - .env
-    build:
-      context: .
-      args:
-        - USER_CODE_PATH=/home/src/${PROJECT_NAME}
-        - ENV=${ENV}
-        - PROJECT_NAME=${PROJECT_NAME}
-      dockerfile: Dockerfile.mage
+  cratedb:
+    image: crate:latest
+    container_name: infra_cratedb
+    restart: unless-stopped
     ports:
-      - "6789:6789"
+      - "4200:4200"
     volumes:
-      - ./mage_projects:/home/src
+      - ./cratedb_data:/data
+    command: [ "crate", "-Cnode.store.allow_mmap=false" ]
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
+    environment:
+      CRATE_HEAP_SIZE: 2g
+    networks:
+      - internal
+  
+  mage-ai:
+    image: mageai/mageai:0.9.34
+    container_name: "mage_ai_pame"
+    command: bash -c "pip install polars-lts-cpu library && /app/run_app.sh"
+    ports:
+      - "6789:6789"
+    volumes:
+      - ./mage_projects:/home/src
+    environment:
+      USER_CODE_PATH: "/home/src/pame_ml_project"
+      REQUIRE_USER_AUTHENTICATION: 0
     networks:
       - internal
 
