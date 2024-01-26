@@ -6,9 +6,9 @@ import pandas as pd
 @data_loader
 def load_data(*args, **kwargs):
     table_name = kwargs['raw_table']
-    crateDB = AltoCrateDB()
+    crateDB = AltoCrateDB(host='infra_cratedb')
 
-    data = crateDB.query_data(table_name=table_name)
+    data = crateDB.query_data(table_name=table_name, filters=None)
     df = pd.DataFrame(data)
 
     return df
