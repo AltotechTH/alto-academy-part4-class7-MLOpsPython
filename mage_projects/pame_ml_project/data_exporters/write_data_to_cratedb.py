@@ -3,7 +3,7 @@ if 'data_exporter' not in globals():
 from utils.database import AltoCrateDB
 
 @data_exporter
-def export_data(data, *args, **kwargs):
+def export_data(df, *args, **kwargs):
     """
     Exports data to some source.
 
@@ -16,8 +16,9 @@ def export_data(data, *args, **kwargs):
         displayed when inspecting the block run.
     """
     table_name = kwargs['raw_table']
-    
-    crateDB = AltoCrateDB()
+    df = df.dropna()
+    crateDB = AltoCrateDB(host='infra_cratedb')
+    data = df.values.tolist()
 
     try:
         crateDB.insert_data(table_name=table_name, data=data)
