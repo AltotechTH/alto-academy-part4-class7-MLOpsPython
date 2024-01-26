@@ -94,7 +94,7 @@ class LoadForecastFeatureEngineer:
         Returns:
             pandas.DataFrame: The DataFrame with added lagged features.
         """
-        if 'datetime' in df.index.names:
+        if 'timestamp' in df.index.names:
             df = df.reset_index()
         for col in col_list:
             df[f'lagged{lag}_{col}'] = df[col].shift(lag)
