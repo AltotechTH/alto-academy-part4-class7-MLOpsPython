@@ -1,0 +1,6 @@
+pendulum
+requests
+pandas
+pytz
+crate
+wandb
