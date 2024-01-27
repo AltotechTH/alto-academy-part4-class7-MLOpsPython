@@ -34,8 +34,20 @@ def train_pycaret_model(data, train_data_proportion, target, fold, metric, save_
 
     best = compare_models(sort=metric)
 
+    evaluate_model(best)
+
+    metrics = pull()
+
+    best_metric = metrics.iloc[0]
+    print(best_metric)
+    best_rmse = best_metric.loc['RMSE']
+    best_mae = best_metric.loc['MAE']
+    best_mse = best_metric.loc['MSE']
+    model_name = best_metric.loc['Model']
     # Save the best model
     save_model(best, save_model_path)
+
+    return best_rmse, best_mae, best_mse, model_name
 
 
 @custom
@@ -51,6 +63,7 @@ def train(data, *args, **kwargs):
     fold = 4
     metric = 'RMSE'
     save_model_path = 'pame_ts_model'
+    # TODO: Change user to your own name
     user = 'john'
     # Get current datetime
     now = pendulum.now().to_datetime_string()
@@ -58,11 +71,13 @@ def train(data, *args, **kwargs):
     # Initiate a W&B experiment
     run = wandb.init(project='alto-academy-part7-timeseries', name=f'{user}_{now}')
     try:
-        # Log the model type
-        wandb.config.update({"model_type": "Py Caret"})
         # Train model
-        best_rmse = train_pycaret_model(data, train_proportion, target, fold, metric, save_model_path)
+        best_rmse, best_mae, best_mse, model_name = train_pycaret_model(data, train_proportion, target, fold, metric, save_model_path)
 
+        # Log the model type
+        wandb.config.update({"model_type": model_name})
+        # Log metrics to W&B
+        wandb.log({"RMSE": best_rmse, "MAE": best_mae, "MSE": best_mse})
         # Create a W&B artifact and add the model file to it
         artifact = wandb.Artifact('model', type='model')
         artifact.add_file(save_model_path + '.pkl')

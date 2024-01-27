@@ -10,5 +10,6 @@ def load_data(*args, **kwargs):
 
     data = crateDB.query_data(table_name=table_name, filters=None)
     df = pd.DataFrame(data)
+    print("Data extracting done!")
 
     return df
